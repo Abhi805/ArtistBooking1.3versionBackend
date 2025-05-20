@@ -9,17 +9,13 @@ import { protect } from './middleware/authMiddleware.js'; // correct path lagao
 // import vendorRoutes from './routes/vendorRoutes.js';
 
 const app = express();
+app.use(cors({
+  origin: "http://localhost:5173",  // ✅ React app ka origin
+  credentials: true                 // ✅ Cookies allow karne ke liye
+}));
 
-// -------------------
-// 🔧 Middleware Setup
-// -------------------
-// app.use(cors({
-//   origin: 'http://localhost:3000', // ✅ Frontend origin
-//   credentials: true
-// }));
-app.use(cors());
 app.use(express.json());
-app.use(cookieParser());
+
 
 // -------------------
 // 🚀 API Routes

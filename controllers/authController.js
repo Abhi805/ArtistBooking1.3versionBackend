@@ -16,20 +16,26 @@ export const registerUser = async (req, res) => {
     if (existingUser)
       return res.status(400).json({ msg: "User already exists" });
 
+    const existingUserNumber = await User.findOne({ mobileNumber });
+    if(existingUserNumber){
+      return res.status(400).json({ msg: "Mobile number already exists" });
+    }
+    
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const newUser = new User({
       fullName,
-      mobileNumber,
+      mobileNumber, 
       email,
       password: hashedPassword,
       role: "user" // 👈 force all new users to be normal users
-    });
+    }); 
 
     await newUser.save();
 
     res.status(201).json({ msg: "User registered successfully" });
   } catch (error) {
+
     res.status(500).json({ msg: "Server error", error: error.message });
   }
 };
@@ -56,15 +62,16 @@ export const loginUser = async (req, res) => {
     const token = generateToken(user);
 
     // Set token in cookie
-    res.cookie("token", token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production", // only true in production
-      sameSite: "Strict", // CSRF protection
-      maxAge: 24 * 60 * 60 * 1000, // 1 day
-    });
+   res.cookie("token", token, {
+  httpOnly: true,
+  secure: false, // ✅ Localhost ke liye FALSE rakhna
+  sameSite: "Lax", // ✅ Localhost ke liye Lax rakhna best hai
+  maxAge: 24 * 60 * 60 * 1000,
+});
 
     res.status(200).json({
       msg: "Login successful",
+      token,
       user: {
         id: user._id,
         fullName: user.fullName,
