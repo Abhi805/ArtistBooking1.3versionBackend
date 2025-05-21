@@ -28,7 +28,7 @@ const createArtist = async (req, res) => {
     });
 
     await newArtist.save();
-    res.status(201).json({ message: 'Artist created', artist: newArtist });
+    res.status(201).json({ message: 'Artist createddddd', artist: newArtist });
   } catch (error) {
     res.status(500).json({ message: error.message });
     console.log("dff")
