@@ -5,7 +5,7 @@ import cookieParser from 'cookie-parser';
 import authRoutes from './routes/authRoutes.js';
 import adminRoutes from './routes/admin.js';
 import artistRoutes from './routes/artistRoutes.js';
-import { protect } from './middleware/authMiddleware.js'; // correct path lagao
+import { verifyToken } from './middleware/authMiddleware.js'; // correct path lagao
 // import vendorRoutes from './routes/vendorRoutes.js';
 
 const app = express();
@@ -27,7 +27,7 @@ app.use('/api/artists', artistRoutes);
 
 
 
-app.get('/test-token', protect, (req, res) => {
+app.get('/test-token', verifyToken, (req, res) => {
   res.json({
     message: 'Token is valid',
     user: req.user,

@@ -50,6 +50,41 @@ const generateToken = (user) => {
   );
 };
 
+// export const loginUser = async (req, res) => {
+//   try {
+//     const { email, password } = req.body;
+//     const user = await User.findOne({ email });
+//     if (!user) return res.status(404).json({ msg: "User not found" });
+
+//     const isMatch = await bcrypt.compare(password, user.password);
+//     if (!isMatch) return res.status(400).json({ msg: "Invalid credentials" });
+
+//     const token = generateToken(user);
+
+//     // Set token in cookie
+//    res.cookie("token", token, {
+//   httpOnly: true,
+//   secure: false, // ✅ Localhost ke liye FALSE rakhna
+//   sameSite: "Lax", // ✅ Localhost ke liye Lax rakhna best hai
+//   maxAge: 24 * 60 * 60 * 1000,
+// });
+
+//     res.status(200).json({
+//       msg: "Login successful",
+//       token,
+//       user: {
+//         id: user._id,
+//         fullName: user.fullName,
+//         email: user.email,
+//         role: user.role,
+//       },
+//     });
+//     console.log("login successfull")
+//   } catch (error) {
+//     res.status(500).json({ msg: "Server error", error: error.message });
+//   }
+// };
+
 export const loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -61,17 +96,16 @@ export const loginUser = async (req, res) => {
 
     const token = generateToken(user);
 
-    // Set token in cookie
-   res.cookie("token", token, {
-  httpOnly: true,
-  secure: false, // ✅ Localhost ke liye FALSE rakhna
-  sameSite: "Lax", // ✅ Localhost ke liye Lax rakhna best hai
-  maxAge: 24 * 60 * 60 * 1000,
-});
+    // Set HTTP-only cookie
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production" ? true : false,
+      sameSite: "Lax",
+      maxAge: 24 * 60 * 60 * 1000, // 1 day
+    });
 
     res.status(200).json({
       msg: "Login successful",
-      token,
       user: {
         id: user._id,
         fullName: user.fullName,
@@ -79,12 +113,12 @@ export const loginUser = async (req, res) => {
         role: user.role,
       },
     });
-    console.log("login successfull")
+
+    console.log("Login successful");
   } catch (error) {
     res.status(500).json({ msg: "Server error", error: error.message });
   }
 };
-
 
 
 export const logoutUser = (req, res) => {
