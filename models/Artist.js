@@ -37,13 +37,13 @@ const artistSchema = new mongoose.Schema({
   },
   duration: {
     type: String,
-    enum: ['15 mins', '30 mins', '45 mins', '1 hours', '2 hours', 'Custom'],
+    // enum: ['15 mins', '30 mins', '45 mins', '1 hours', '2 hours', 'Custom'],
     default: 'Custom'
   },
   travel: {
     type: String,
-    enum: ['Local', 'National', 'International', 'Any'],
-    default: 'Any'
+    // enum: ['Local', 'National', 'International', 'Any'],
+    // default: 'Any'
   },
   category: {
     type: String,
