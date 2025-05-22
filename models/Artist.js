@@ -1,114 +1,110 @@
-// const mongoose = require("mongoose");
-
-// const artistSchema = new mongoose.Schema({
-//     firstName: {
-//         type: String,
-//         required: true,
-//         trim: true
-//     },
-//     lastName: {
-//         type: String,
-//         required: true,
-//         trim: true
-//     },
-//     emailAddress: {
-//         type: String,
-//         required: true,
-//         unique: true,
-//         trim: true,
-//         lowercase: true
-//     },
-//     mobileNumber: {
-//         type: String,
-//         required: true,
-//         trim: true
-//     },
-//     city: {
-//         type: String,
-//         required: true
-//     },
-//     performanceDuration: {
-//         type: String,
-//         required: true // Example: "45-60 mins"
-//     },
-//     openToTravel: {
-//         type: Boolean,
-//         default: false
-//     },
-//     category: {
-//         type: String,
-//         required: true // e.g. Singer, DJ, Band, etc.
-//     },
-//     musicGenres: {
-//         type: [String],
-//         required: true // e.g. ["Bollywood", "Punjabi"]
-//     },
-//     teamMembers: {
-//         type: Number,
-//         required: true
-//     },
-//     locationDescription: {
-//         type: String,
-//         required: true,
-//         minlength: [300, "Location description must be at least 300 characters"]
-//     },
-//     mediaUploads: {
-//         type: [String], // URLs or file paths
-//         validate: {
-//             validator: function (val) {
-//                 return val.length >= 5;
-//             },
-//             message: "At least 5 media images are required"
-//         }
-//     },
-//     artistVideos: {
-//         type: [String],
-//         validate: {
-//             validator: function (val) {
-//                 return val.length <= 3;
-//             },
-//             message: "Maximum 3 artist videos allowed"
-//         }
-//     },
-//     profilePageTitle: {
-//         type: String,
-//         required: true
-//     },
-//     pageKeywords: {
-//         type: String,
-//         maxlength: [160, "Page keywords must be under 160 characters"]
-//     },
-//     profilePageDescribe: {
-//         type: String,
-//         maxlength: [166, "Profile description must be under 166 characters"]
-//     },
-//     createdAt: {
-//         type: Date,
-//         default: Date.now
-//     }
-// });
-
-// module.exports = mongoose.model("Artist", artistSchema);
-
-
-
-
-// models/Artist.js
 import mongoose from 'mongoose';
 
 const artistSchema = new mongoose.Schema({
-  name: String,
-  bio: String,
-  category: String,
-  location: String,
-  image: {
-    data: Buffer, // 👈 Binary data
-    contentType: String // 👈 MIME type (e.g. image/png)
-  },
-  createdBy: {
+  userId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'User'
+    ref: 'User',
+    required: true,
+    index: true
+  },
+  firstName: {
+    type: String,
+    required: true,
+    trim: true,
+    maxlength: 50
+  },
+  lastName: {
+    type: String,
+    trim: true,
+    maxlength: 50
+  },
+  email: {
+    type: String,
+    required: true,
+    trim: true,
+    lowercase: true,
+    match: [/\S+@\S+\.\S+/, 'Invalid email']
+  },
+  mobile: {
+    type: String,
+    required: true,
+    trim: true,
+    match: [/^[0-9]{10}$/, 'Invalid mobile number']
+  },
+  city: {
+    type: String,
+    trim: true
+  },
+  duration: {
+    type: String,
+    enum: ['15 mins', '30 mins', '45 mins', '1 hours', '2 hours', 'Custom'],
+    default: 'Custom'
+  },
+  travel: {
+    type: String,
+    enum: ['Local', 'National', 'International', 'Any'],
+    default: 'Any'
+  },
+  category: {
+    type: String,
+    required: true,
+    trim: true
+  },
+  genre: {
+    type: String,
+    trim: true
+  },
+  team: {
+    type: String,
+    trim: true
+  },
+  location: {
+    type: String,
+    trim: true
+  },
+  description: {
+    type: String,
+    trim: true,
+    maxlength: 1000
+  },
+  // imageUrl: {
+  //   type: String,
+  //   trim: true
+
+  // },
+  images: [{
+    data: Buffer,
+    contentType: String
+  }],
+  videoLink: {
+    type: String,
+    trim: true,
+    match: [/^(http|https):\/\/[^ "]+$/, 'Invalid video URL']
+  },
+  profileTitle: {
+    type: String,
+    trim: true,
+    maxlength: 70
+  },
+  profileKeywords: {
+    type: String,
+    trim: true
+  },
+  profileDescription: {
+    type: String,
+    trim: true,
+    maxlength: 160
+  },
+  isApproved: {
+    type: Boolean,
+    default: true
   }
-});
+}, { timestamps: true });
 
 export default mongoose.model('Artist', artistSchema);
+
+
+
+
+
+

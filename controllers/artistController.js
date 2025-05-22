@@ -3,37 +3,40 @@
 import Artist from '../models/artist.js';
 
 // Create Artist
-// controllers/artistController.js
 const createArtist = async (req, res) => {
   try {
-    const { name, bio, category, location } = req.body;
-    const createdBy = req.user.id;
+    const userId = req.user.id;
+    console.log('Body:', req.body);
+    console.log('Files:', req.files);
 
-    let image = null;
+    const images = [];
 
-    if (req.file) {
-      image = {
-        data: req.file.buffer,
-        contentType: req.file.mimetype
-      };
+    if (req.files && req.files.length > 0) {
+      req.files.forEach(file => {
+        images.push({
+          data: file.buffer,
+          contentType: file.mimetype
+        });
+      });
     }
 
     const newArtist = new Artist({
-      name,
-      bio,
-      category,
-      location,
-      image,
-      createdBy
+      ...req.body,
+      userId,
+      images,
+      isApproved: false
     });
 
     await newArtist.save();
-    res.status(201).json({ message: 'Artist createddddd', artist: newArtist });
+    console.log("user create successfully");
+    res.status(201).json({ success: true, artist: newArtist });
+
   } catch (error) {
-    res.status(500).json({ message: error.message });
-    console.log("dff")
+    console.error("Error creating artist:", error);
+    res.status(500).json({ success: false, error: error.message });
   }
 };
+
 
 
 // Get all Artists
@@ -41,7 +44,7 @@ const getAllArtists = async (req, res) => {
   try {
     const artists = await Artist.find();
     res.status(200).json(artists);
-  } catch (error) {  
+  } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
@@ -63,7 +66,7 @@ const updateArtist = async (req, res) => {
     const artist = await Artist.findById(req.params.id);
     if (!artist) return res.status(404).json({ message: 'Artist not found' });
 
-    if (artist.createdBy.toString() !== req.user.id && req.user.role !== 'admin') {
+    if (artist.userId.toString() !== req.user.id && req.user.role !== 'admin') {
       return res.status(403).json({ message: 'Unauthorized' });
     }
 
@@ -83,7 +86,7 @@ const deleteArtist = async (req, res) => {
     const artist = await Artist.findById(req.params.id);
     if (!artist) return res.status(404).json({ message: 'Artist not found' });
 
-    if (artist.createdBy.toString() !== req.user.id && req.user.role !== 'admin') {
+    if (artist.userId.toString() !== req.user.id && req.user.role !== 'admin') {
       return res.status(403).json({ message: 'Unauthorized' });
     }
 
