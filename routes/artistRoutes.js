@@ -13,3 +13,4 @@ router.put('/:id', verifyToken, upload.single('image'), updateArtist);
 router.delete('/:id', verifyToken, deleteArtist);
 
 export default router;
+ 
