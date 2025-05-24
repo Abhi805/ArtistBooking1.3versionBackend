@@ -61,13 +61,14 @@ export const validateArtistInput = (req, res, next) => {
   if (mobile && !mobileRegex.test(mobile)) {
     errors.push("Mobile number must be 10 digits");
   }
-
+ 
   // Images validation
   if (!req.files || req.files.length === 0) {
     errors.push("At least one image is required");
   } else if (req.files.length > 6) {
     errors.push("You can upload maximum 6 images only");
   }
+console.log("FILES RECEIVED:", req.files);
 
   // Agar errors hai to turant response bhej do
   if (errors.length > 0) {

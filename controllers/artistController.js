@@ -26,7 +26,7 @@ const createArtist = async (req, res) => {
       images,
       isApproved: false
     });
-
+ 
     await newArtist.save();
     console.log("user create successfully");
     res.status(201).json({ success: true, artist: newArtist });
@@ -41,7 +41,7 @@ const createArtist = async (req, res) => {
 
 // Get all Artists
 const getAllArtists = async (req, res) => {
-  try {
+  try { 
     const artists = await Artist.find();
     res.status(200).json(artists);
   } catch (error) {
@@ -54,6 +54,12 @@ const getArtistById = async (req, res) => {
   try {
     const artist = await Artist.findById(req.params.id);
     if (!artist) return res.status(404).json({ message: 'Artist not found' });
+        // Check if artist and images exist
+    if (artist && artist.images && artist.images.length > 0) {
+      artist.images = artist.images.map((img) => {
+        return `data:${img.contentType};base64,${img.data.toString("base64")}`;
+      });
+    }
     res.status(200).json(artist);
   } catch (error) {
     res.status(500).json({ message: error.message });

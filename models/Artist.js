@@ -76,11 +76,12 @@ const artistSchema = new mongoose.Schema({
     data: Buffer,
     contentType: String
   }],
-  videoLink: {
-    type: String,
-    trim: true,
-    match: [/^(http|https):\/\/[^ "]+$/, 'Invalid video URL']
-  },
+videoLink: [{
+  type: String,
+  trim: true,
+  match: [/^(http|https):\/\/[^ "]+$/, 'Invalid video URL']
+}],
+
   profileTitle: {
     type: String,
     trim: true,
