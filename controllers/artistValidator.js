@@ -1,5 +1,3 @@
-// middlewares/artistValidator.js
-
 export const validateArtistInput = (req, res, next) => {
   const {
     firstName,
@@ -22,8 +20,8 @@ export const validateArtistInput = (req, res, next) => {
 
   const errors = [];
 
-  // Check required fields
-  const requiredFields = {
+  // String-only fields to validate with trim
+  const stringFields = {
     firstName,
     lastName,
     email,
@@ -36,19 +34,28 @@ export const validateArtistInput = (req, res, next) => {
     team,
     location,
     description,
-    videoLink,
     profileTitle,
     profileKeywords,
     profileDescription
   };
 
-  Object.entries(requiredFields).forEach(([key, value]) => {
-    if (!value || value.trim() === "") {
+  Object.entries(stringFields).forEach(([key, value]) => {
+    if (typeof value !== "string" || value.trim() === "") {
       errors.push(`${key} is required`);
     }
   });
 
-  
+  // Validate videoLink (must be a non-empty array of valid URLs)
+  if (!Array.isArray(videoLink) || videoLink.length === 0) {
+    errors.push("At least one video link is required");
+  } else {
+    const urlRegex = /^(http|https):\/\/[^ "]+$/;
+    videoLink.forEach((url, index) => {
+      if (typeof url !== "string" || !urlRegex.test(url.trim())) {
+        errors.push(`Video link ${index + 1} is invalid`);
+      }
+    });
+  }
 
   // Email validation
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -61,19 +68,16 @@ export const validateArtistInput = (req, res, next) => {
   if (mobile && !mobileRegex.test(mobile)) {
     errors.push("Mobile number must be 10 digits");
   }
- 
+
   // Images validation
   if (!req.files || req.files.length === 0) {
     errors.push("At least one image is required");
   } else if (req.files.length > 6) {
     errors.push("You can upload maximum 6 images only");
   }
-console.log("FILES RECEIVED:", req.files);
 
-  // Agar errors hai to turant response bhej do
   if (errors.length > 0) {
-    
-    console.log("Validation errors:", errors);  // <- Add this
+    console.log("Validation errors:", errors);
     return res.status(400).json({
       success: false,
       errors
