@@ -15,7 +15,7 @@ const createArtist = async (req, res) => {
       req.files.forEach(file => {
         images.push({
           data: file.buffer,
-          contentType: file.mimetype
+          contentType: file.mimetype 
         });
       });
     }
@@ -42,8 +42,13 @@ const createArtist = async (req, res) => {
 // Get all Artists
 const getAllArtists = async (req, res) => {
   try { 
-    const artists = await Artist.find();
-    res.status(200).json(artists);
+    const artist = await Artist.find();
+      if (artist && artist.images && artist.images.length > 0) {
+      artist.images = artist.images.map((img) => {
+        return `data:${img.contentType};base64,${img.data.toString("base64")}`;
+      });
+    }
+    res.status(200).json(artist);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
