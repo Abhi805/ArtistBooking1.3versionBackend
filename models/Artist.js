@@ -72,10 +72,16 @@ const artistSchema = new mongoose.Schema({
   //   trim: true
 
   // },
+  // images: [{
+  //   data: Buffer,
+  //   contentType: String
+  // }],
   images: [{
-    data: Buffer,
-    contentType: String
-  }],
+  type: String, // Will store Cloudinary URLs
+  required: true,
+  trim: true
+}],
+
 videoLink: [{
   type: String,
   trim: true,

@@ -2,33 +2,31 @@
 
 import Artist from '../models/artist.js';
 
-// Create Artist
+//Create Artist Profile
 const createArtist = async (req, res) => {
   try {
+    console.log("fgfg")
     const userId = req.user.id;
-    console.log('Body:', req.body);
-    console.log('Files:', req.files);
+    console.log("Body:", req.body);
+    console.log("Files:", req.files);
 
     const images = [];
 
     if (req.files && req.files.length > 0) {
       req.files.forEach(file => {
-        images.push({
-          data: file.buffer,
-          contentType: file.mimetype 
-        });
+        images.push(file.path); // file.path = Cloudinary image URL
       });
     }
 
     const newArtist = new Artist({
       ...req.body,
       userId,
-      images,
+      images,          // Save array of URLs
       isApproved: false
     });
- 
+
     await newArtist.save();
-    console.log("user create successfully");
+    console.log("Artist created successfully");
     res.status(201).json({ success: true, artist: newArtist });
 
   } catch (error) {

@@ -16,7 +16,7 @@ app.use(cors({
 
 app.use(express.json());
 app.use(cookieParser());
-
+app.use(express.urlencoded({ extended: true })); 
 // -------------------
 // 🚀 API Routes
 // -------------------
@@ -25,15 +25,6 @@ app.use('/api/admin', adminRoutes);
 app.use('/api/artists', artistRoutes);
 app.use("/api", authRoutes);
 // app.use('/api/vendors', vendorRoutes);
-
-
-
-app.get('/test-token', verifyToken, (req, res) => {
-  res.json({
-    message: 'Token is valid',
-    user: req.user,
-  });
-});
 
 
 

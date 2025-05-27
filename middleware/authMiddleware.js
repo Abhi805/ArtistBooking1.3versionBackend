@@ -65,7 +65,7 @@ import User from "../models/User.js";
 // 🛡️ Middleware to verify JWT token from cookies
 export const verifyToken = async (req, res, next) => {
   const token = req.cookies.token;
-
+  console.log("token is verifyed",token);
   if (!token) {
     return res.status(401).json({ message: "Unauthorized: No token provided" });
   }
@@ -79,6 +79,8 @@ export const verifyToken = async (req, res, next) => {
     }
 
     req.user = user; // Attach user to request
+  console.log("✅ Validation passed, going to next middleware",req.user );
+
     next();
   } catch (error) {
     return res.status(401).json({ message: "Unauthorized: Invalid or expired token" });

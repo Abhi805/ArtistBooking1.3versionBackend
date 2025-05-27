@@ -1,4 +1,5 @@
 export const validateArtistInput = (req, res, next) => {
+  console.log("artist validator run successfully");
   const {
     firstName,
     lastName,
@@ -19,8 +20,9 @@ export const validateArtistInput = (req, res, next) => {
   } = req.body;
 
   const errors = [];
+  console.log("artist validator run successfully");
 
-  // String-only fields to validate with trim
+  // Fields expected to be non-empty strings
   const stringFields = {
     firstName,
     lastName,
@@ -39,13 +41,15 @@ export const validateArtistInput = (req, res, next) => {
     profileDescription
   };
 
+  console.log("artist validator run successfully");
+
   Object.entries(stringFields).forEach(([key, value]) => {
-    if (typeof value !== "string" || value.trim() === "") {
-      errors.push(`${key} is required`);
+    if (!value || typeof value !== "string" || value.trim() === "") {
+      errors.push(`${key} is required and must be a non-empty string`);
     }
   });
 
-  // Validate videoLink (must be a non-empty array of valid URLs)
+  // Validate videoLink: must be a non-empty array of valid URLs
   if (!Array.isArray(videoLink) || videoLink.length === 0) {
     errors.push("At least one video link is required");
   } else {
@@ -57,19 +61,19 @@ export const validateArtistInput = (req, res, next) => {
     });
   }
 
-  // Email validation
+  // Email validation (only if email is provided)
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   if (email && !emailRegex.test(email)) {
     errors.push("Email is invalid");
   }
 
-  // Mobile number validation (10 digits)
+  // Mobile validation (only if mobile is provided)
   const mobileRegex = /^[0-9]{10}$/;
   if (mobile && !mobileRegex.test(mobile)) {
     errors.push("Mobile number must be 10 digits");
   }
 
-  // Images validation
+  // Images validation (multer req.files)
   if (!req.files || req.files.length === 0) {
     errors.push("At least one image is required");
   } else if (req.files.length > 6) {
@@ -83,6 +87,6 @@ export const validateArtistInput = (req, res, next) => {
       errors
     });
   }
-
+console.log("artist validator run successfully");
   next();
 };
