@@ -9,6 +9,7 @@ dotenv.config();
 import authRoutes from './routes/authRoutes.js';
 import adminRoutes from './routes/admin.js';
 import artistRoutes from './routes/artistRoutes.js';
+import bookingRoutes from './routes/bookingRoutes.js';
 
 const app = express();
 
@@ -28,6 +29,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use('/api/auth', authRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/artists', artistRoutes);
+app.use('/api/artists/booking', bookingRoutes);
 
 
 export default app;
