@@ -1,52 +1,55 @@
 // controllers/artistController.js
 
-import Artist from '../models/artist.js';
+import Artist from '../models/Artist.js';
+import cloudinary from '../config/cloudinary.js';
 
-//Create Artist Profile
-const createArtist = async (req, res) => {
+
+
+
+
+ const createArtist = async (req, res) => {
   try {
-    console.log("fgfg")
     const userId = req.user.id;
-    console.log("Body:", req.body);
-    console.log("Files:", req.files);
+    const files = req.files || [];
 
-    const images = [];
-
-    if (req.files && req.files.length > 0) {
-      req.files.forEach(file => {
-        images.push(file.path); // file.path = Cloudinary image URL
-      });
+    if (files.length === 0) {
+      return res.status(400).json({ success: false, errors: ['At least one image is required'] });
     }
+
+    const imageUploadPromises = files.map(async (file) => {
+      const fixedPath = file.path.replace(/\\/g, '/');
+      const result = await cloudinary.uploader.upload(fixedPath, {
+        folder: 'artist_images',
+      });
+      return result.secure_url;
+    });
+
+    const images = await Promise.all(imageUploadPromises);
+
+    // Validate videoLink exists and is array in req.body here or in separate middleware
 
     const newArtist = new Artist({
       ...req.body,
       userId,
-      images,          // Save array of URLs
-      isApproved: false
+      images,
+      isApproved: false,
     });
 
     await newArtist.save();
-    console.log("Artist created successfully");
-    res.status(201).json({ success: true, artist: newArtist });
 
+    res.status(201).json({ success: true, artist: newArtist });
+    console.log("artist create successfully",newArtist);
   } catch (error) {
-    console.error("Error creating artist:", error);
+    console.error('Error creating artist:', error);
     res.status(500).json({ success: false, error: error.message });
   }
 };
 
-
-
 // Get all Artists
 const getAllArtists = async (req, res) => {
-  try { 
-    const artist = await Artist.find();
-      if (artist && artist.images && artist.images.length > 0) {
-      artist.images = artist.images.map((img) => {
-        return `data:${img.contentType};base64,${img.data.toString("base64")}`;
-      });
-    }
-    res.status(200).json(artist);
+  try {
+    const artists = await Artist.find();
+    res.status(200).json(artists);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -57,12 +60,6 @@ const getArtistById = async (req, res) => {
   try {
     const artist = await Artist.findById(req.params.id);
     if (!artist) return res.status(404).json({ message: 'Artist not found' });
-        // Check if artist and images exist
-    if (artist && artist.images && artist.images.length > 0) {
-      artist.images = artist.images.map((img) => {
-        return `data:${img.contentType};base64,${img.data.toString("base64")}`;
-      });
-    }
     res.status(200).json(artist);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -106,7 +103,6 @@ const deleteArtist = async (req, res) => {
   }
 };
 
-// ✅ Export all
 export {
   createArtist,
   getAllArtists,

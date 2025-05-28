@@ -1,12 +1,10 @@
 import express from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
-
 import authRoutes from './routes/authRoutes.js';
 import adminRoutes from './routes/admin.js';
 import artistRoutes from './routes/artistRoutes.js';
-import { verifyToken } from './middleware/authMiddleware.js'; // correct path lagao
-// import vendorRoutes from './routes/vendorRoutes.js';
+
 
 const app = express();
 app.use(cors({
@@ -17,7 +15,7 @@ app.use(cors({
 app.use(express.json());
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true })); 
-// -------------------
+// ------------------- 
 // 🚀 API Routes
 // -------------------
 app.use('/api/auth',authRoutes);
@@ -29,3 +27,4 @@ app.use("/api", authRoutes);
 
 
 export default app;
+ 
