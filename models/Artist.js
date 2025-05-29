@@ -92,7 +92,7 @@ videoLink: [{
   profileDescription: {
     type: String,
     trim: true,
-    maxlength: 160
+    maxlength: 360
   },
   isApproved: {
     type: Boolean,

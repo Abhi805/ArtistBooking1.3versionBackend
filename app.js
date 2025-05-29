@@ -10,6 +10,7 @@ import authRoutes from './routes/authRoutes.js';
 import adminRoutes from './routes/admin.js';
 import artistRoutes from './routes/artistRoutes.js';
 import bookingRoutes from './routes/bookingRoutes.js';
+import inquiryRoutes from './routes/inquiryRoutes.js';
 
 const app = express();
 
@@ -23,13 +24,11 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 
-// ------------------- 
-// 🚀 API Routes
-// ------------------- 
 app.use('/api/auth', authRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/artists', artistRoutes);
 app.use('/api/artists/booking', bookingRoutes);
+app.use('/api/inquiry', inquiryRoutes);
 
 
 export default app;
