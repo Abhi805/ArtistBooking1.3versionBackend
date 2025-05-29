@@ -65,7 +65,7 @@ export const loginUser = async (req, res) => {
     // Set HTTP-only cookie
     res.cookie("token", token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production" ? true : false,
+      secure:false,
       sameSite: "Lax",
       maxAge: 24 * 60 * 60 * 1000, // 1 day
     });

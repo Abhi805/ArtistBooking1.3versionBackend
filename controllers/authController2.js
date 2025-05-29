@@ -1,4 +1,4 @@
-// controllers/authController.js
+
 import jwt from "jsonwebtoken";
 
 const getProtectedData = (req, res) => {
@@ -16,17 +16,3 @@ const getProtectedData = (req, res) => {
 export { getProtectedData };
 
 
-const checkRoute = (req, res) => {
-  try {
-    const token = req.cookies.accessToken;
-    if (!token) return res.json({ loggedIn: false });
-
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    res.json({ loggedIn: true, user: decoded });
-  } catch (err) {
-    res.json({ loggedIn: false });
-  }
-}
-
-
-export { checkRoute };
