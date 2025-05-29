@@ -6,7 +6,6 @@ import { verifyToken } from '../middleware/authMiddleware.js'; // correct path l
 import upload from '../middleware/multer.js';
 
 
-
 router.post('/add', verifyToken,upload.array('images',5), validateArtistInput,createArtist);
 router.get('/', getAllArtists);
 router.get('/:id', getArtistById);
