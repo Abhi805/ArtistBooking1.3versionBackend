@@ -46,21 +46,6 @@ export const validateArtistInput = (req, res, next) => {
     }
   });
 
-<<<<<<< HEAD
-  // Validate videoLink: must be a non-empty array of valid URLs
-  // Only validate videoLink if it's provided and not empty
-  if (videoLink && Array.isArray(videoLink) && videoLink.length > 0) {
-    const urlRegex = /^(http|https):\/\/[^ "]+$/;
-    videoLink.forEach((url, index) => {
-      if (typeof url !== "string" || !urlRegex.test(url.trim())) {
-        errors.push(`Video link ${index + 1} is invalid`);
-      }
-    });
-  }
-
-
-  // Email validation (only if email is provided)
-=======
   // Validate video links only if provided
   let parsedVideoLink = [];
 
@@ -82,7 +67,6 @@ export const validateArtistInput = (req, res, next) => {
   }
 
   // Email validation
->>>>>>> 922a4c7e2001de33416aec9205eea4e41a6e3ba6
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   if (email && !emailRegex.test(email)) {
     errors.push("Email is invalid");
@@ -108,10 +92,6 @@ export const validateArtistInput = (req, res, next) => {
       errors
     });
   }
-<<<<<<< HEAD
-=======
-
->>>>>>> 922a4c7e2001de33416aec9205eea4e41a6e3ba6
   console.log("artist validator run successfully");
   next();
 };
