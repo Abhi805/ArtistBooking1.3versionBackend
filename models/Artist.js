@@ -100,7 +100,7 @@ videoLink: [{
   }
 }, { timestamps: true });
 
-export default mongoose.model('Artist', artistSchema);
+export default mongoose.model('ArtistRegistration', artistSchema);
 
 
 

@@ -11,4 +11,4 @@ const inquirySchema = new mongoose.Schema(
     { timestamps: true }
 );
 
-export default mongoose.model("InquiryForm", inquirySchema);
+export default mongoose.model("InquiryFormpopup", inquirySchema);
