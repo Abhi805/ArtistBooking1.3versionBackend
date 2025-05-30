@@ -20,11 +20,12 @@ const sendInquiryConfirmation = async (req, res) => {
             to: process.env.SMTP_EMAIL,  // admin email
             subject: 'New Connect Request',
             html: `
+                   <h3>'New Connect Request from pop page</h3>
                 <p><strong>Name:</strong> ${fullName}</p>
                 <p><strong>Phone:</strong> ${phone}</p>
                 <p><strong>Email:</strong> ${email || "Not Provided"}</p>
                 <p><strong>Service:</strong> ${service || "Not Provided"}</p>
-                <p><strong>Consent:</strong> ${consent ? 'Yes' : 'No'}</p>
+          
             `
         };
 
