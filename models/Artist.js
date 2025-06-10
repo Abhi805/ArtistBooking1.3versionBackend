@@ -96,11 +96,11 @@ videoLink: [{
   },
   isApproved: {
     type: Boolean,
-    default: true
+    default: false,
   }
 }, { timestamps: true });
 
-export default mongoose.model('Artist', artistSchema);
+export default mongoose.model('ArtistRegistration', artistSchema);
 
 
 

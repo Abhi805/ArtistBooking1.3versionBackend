@@ -1,7 +1,7 @@
 // controllers/artistController.js
 
-import Artist from '../models/Artist.js';
-import cloudinary from '../config/cloudinary.js';
+import Artist from '../../models/Artist.js';
+import cloudinary from '../../config/cloudinary.js';
 
 
 
@@ -48,12 +48,46 @@ import cloudinary from '../config/cloudinary.js';
 // Get all Artists
 const getAllArtists = async (req, res) => {
   try {
-    const artists = await Artist.find();
+    const artists = await Artist.find({ isApproved: true });
     res.status(200).json(artists);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
+
+// Get all artists pending approval
+const getPendingArtists = async (req, res) => {
+  try {
+    const pendingArtists = await Artist.find({ isApproved: false });
+    res.status(200).json(pendingArtists);
+    console.log("fddfds")
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+
+//approve artist
+const approveArtist = async (req, res) => {
+  try {
+    const artistId = req.params.id;
+
+    // Update isApproved to true
+    const artist = await Artist.findByIdAndUpdate(
+      artistId,
+      { isApproved: true },
+      { new: true }
+    );
+
+    if (!artist) return res.status(404).json({ message: 'Artist not found' });
+
+    res.status(200).json({ message: 'Artist approved', artist });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+
 
 // Get Artist by ID
 const getArtistById = async (req, res) => {
@@ -65,6 +99,11 @@ const getArtistById = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+
+
+
+
 
 // Update Artist
 const updateArtist = async (req, res) => {
@@ -108,5 +147,7 @@ export {
   getAllArtists,
   getArtistById,
   updateArtist,
-  deleteArtist
+  deleteArtist,
+  getPendingArtists,
+  approveArtist
 };

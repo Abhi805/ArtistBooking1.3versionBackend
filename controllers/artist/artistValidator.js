@@ -37,7 +37,8 @@ export const validateArtistInput = (req, res, next) => {
     description,
     profileTitle,
     profileKeywords,
-    profileDescription
+    profileDescription,
+ 
   };
 
   Object.entries(stringFields).forEach(([key, value]) => {
