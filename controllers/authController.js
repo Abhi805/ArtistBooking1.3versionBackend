@@ -1,6 +1,7 @@
 import User from "../models/User.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+// import { sendMail } from "../utils/mailHelper.js";
 
 //register functionlity
 
@@ -17,19 +18,19 @@ export const registerUser = async (req, res) => {
       return res.status(400).json({ msg: "User already exists" });
 
     const existingUserNumber = await User.findOne({ mobileNumber });
-    if(existingUserNumber){
+    if (existingUserNumber) {
       return res.status(400).json({ msg: "Mobile number already exists" });
     }
-    
+
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const newUser = new User({
       fullName,
-      mobileNumber, 
+      mobileNumber,
       email,
       password: hashedPassword,
       role: "user" // 👈 force all new users to be normal users
-    }); 
+    });
 
     await newUser.save();
 
@@ -60,12 +61,16 @@ export const loginUser = async (req, res) => {
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) return res.status(400).json({ msg: "Invalid credentials" });
 
+
+
+
+
     const token = generateToken(user);
 
     // Set HTTP-only cookie
     res.cookie("token", token, {
       httpOnly: true,
-      secure:false,
+      secure: false,
       sameSite: "Lax",
       maxAge: 24 * 60 * 60 * 1000, // 1 day
     });
