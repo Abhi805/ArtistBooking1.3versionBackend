@@ -1,21 +1,70 @@
 // controllers/artistController.js
 
+// import Artist from '../../models/Artist.js';
+// import cloudinary from '../../config/cloudinary.js';
+
+//  const createArtist = async (req, res) => {
+//   try {
+//     const userId = req.user.id;
+//     const files = req.files || [];
+
+//     if (files.length === 0) {
+//       return res.status(400).json({ success: false, errors: ['At least one image is required'] });
+//     }
+
+//     const imageUploadPromises = files.map(async (file) => {
+//       const fixedPath = file.path.replace(/\\/g, '/');
+//       const result = await cloudinary.uploader.upload(fixedPath, {
+//         folder: 'artist_images',
+//       });
+//       return result.secure_url;
+//     });
+
+//     const images = await Promise.all(imageUploadPromises);
+
+//     // Validate videoLink exists and is array in req.body here or in separate middleware
+
+//     const newArtist = new Artist({
+//       ...req.body,
+//       userId,
+//       images,
+//       isApproved: false,
+//     });
+
+//     await newArtist.save();
+
+//     res.status(201).json({ success: true, artist: newArtist });
+//     console.log("artist create successfully",newArtist);
+//   } catch (error) {
+//     console.error('Error creating artist:', error);
+//     res.status(500).json({ success: false, error: error.message });
+//   }
+// };
+
+
+
+
 import Artist from '../../models/Artist.js';
+import User from '../../models/User.js'; // ✅ Add this
 import cloudinary from '../../config/cloudinary.js';
 
-
-
-
-
- const createArtist = async (req, res) => {
+const createArtist = async (req, res) => {
   try {
     const userId = req.user.id;
     const files = req.files || [];
 
+    // ✅ Step 1: Prevent duplicate artist profile
+    const existingProfile = await Artist.findOne({ userId });
+    if (existingProfile) {
+      return res.status(400).json({ success: false, message: 'Artist profile already exists for this user.' });
+    }
+
+    // ✅ Step 2: Validate at least one image is provided
     if (files.length === 0) {
       return res.status(400).json({ success: false, errors: ['At least one image is required'] });
     }
 
+    // ✅ Step 3: Upload images to Cloudinary
     const imageUploadPromises = files.map(async (file) => {
       const fixedPath = file.path.replace(/\\/g, '/');
       const result = await cloudinary.uploader.upload(fixedPath, {
@@ -26,8 +75,7 @@ import cloudinary from '../../config/cloudinary.js';
 
     const images = await Promise.all(imageUploadPromises);
 
-    // Validate videoLink exists and is array in req.body here or in separate middleware
-
+    // ✅ Step 4: Create Artist Document
     const newArtist = new Artist({
       ...req.body,
       userId,
@@ -37,13 +85,18 @@ import cloudinary from '../../config/cloudinary.js';
 
     await newArtist.save();
 
+    // ✅ Step 5: Update User profileCompleted to true
+    await User.findByIdAndUpdate(userId, { profileCompleted: true });
+
     res.status(201).json({ success: true, artist: newArtist });
-    console.log("artist create successfully",newArtist);
+    console.log("✅ Artist created and user profile marked as complete:", newArtist);
+
   } catch (error) {
-    console.error('Error creating artist:', error);
+    console.error('❌ Error creating artist:', error);
     res.status(500).json({ success: false, error: error.message });
   }
 };
+
 
 // Get all Artists
 const getAllArtists = async (req, res) => {
