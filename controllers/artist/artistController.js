@@ -1,45 +1,3 @@
-// controllers/artistController.js
-
-// import Artist from '../../models/Artist.js';
-// import cloudinary from '../../config/cloudinary.js';
-
-//  const createArtist = async (req, res) => {
-//   try {
-//     const userId = req.user.id;
-//     const files = req.files || [];
-
-//     if (files.length === 0) {
-//       return res.status(400).json({ success: false, errors: ['At least one image is required'] });
-//     }
-
-//     const imageUploadPromises = files.map(async (file) => {
-//       const fixedPath = file.path.replace(/\\/g, '/');
-//       const result = await cloudinary.uploader.upload(fixedPath, {
-//         folder: 'artist_images',
-//       });
-//       return result.secure_url;
-//     });
-
-//     const images = await Promise.all(imageUploadPromises);
-
-//     // Validate videoLink exists and is array in req.body here or in separate middleware
-
-//     const newArtist = new Artist({
-//       ...req.body,
-//       userId,
-//       images,
-//       isApproved: false,
-//     });
-
-//     await newArtist.save();
-
-//     res.status(201).json({ success: true, artist: newArtist });
-//     console.log("artist create successfully",newArtist);
-//   } catch (error) {
-//     console.error('Error creating artist:', error);
-//     res.status(500).json({ success: false, error: error.message });
-//   }
-// };
 
 
 
@@ -48,54 +6,72 @@ import Artist from '../../models/Artist.js';
 import User from '../../models/User.js'; // ✅ Add this
 import cloudinary from '../../config/cloudinary.js';
 
+
+import Review from "../../models/Review.js";
+
+
 const createArtist = async (req, res) => {
   try {
     const userId = req.user.id;
-    const files = req.files || [];
+    const files = req.files || {};
 
-    // ✅ Step 1: Prevent duplicate artist profile
+    // ✅ Check for duplicate artist profile
     const existingProfile = await Artist.findOne({ userId });
     if (existingProfile) {
       return res.status(400).json({ success: false, message: 'Artist profile already exists for this user.' });
     }
 
-    // ✅ Step 2: Validate at least one image is provided
-    if (files.length === 0) {
-      return res.status(400).json({ success: false, errors: ['At least one image is required'] });
+    const galleryImages = files.images || [];
+    const profileImageFile = files.profileImage?.[0];
+
+    // ✅ Ensure at least one gallery image is uploaded
+    if (galleryImages.length === 0) {
+      return res.status(400).json({ success: false, errors: ['At least one gallery image is required'] });
     }
 
-    // ✅ Step 3: Upload images to Cloudinary
-    const imageUploadPromises = files.map(async (file) => {
+    // ✅ Upload gallery images to Cloudinary
+    const imageUploadPromises = galleryImages.map(async (file) => {
       const fixedPath = file.path.replace(/\\/g, '/');
       const result = await cloudinary.uploader.upload(fixedPath, {
         folder: 'artist_images',
       });
       return result.secure_url;
     });
-
     const images = await Promise.all(imageUploadPromises);
 
-    // ✅ Step 4: Create Artist Document
+    // ✅ Upload profile image to Cloudinary (if present)
+    let profileImage = '';
+    if (profileImageFile) {
+      const fixedPath = profileImageFile.path.replace(/\\/g, '/');
+      const result = await cloudinary.uploader.upload(fixedPath, {
+        folder: 'artist_profile_photos',
+      });
+      profileImage = result.secure_url;
+    }
+
+    // ✅ Create artist document
     const newArtist = new Artist({
       ...req.body,
       userId,
       images,
+      profileImage,
       isApproved: false,
     });
 
     await newArtist.save();
 
-    // ✅ Step 5: Update User profileCompleted to true
+    // ✅ Mark user as profile completed
     await User.findByIdAndUpdate(userId, { profileCompleted: true });
 
     res.status(201).json({ success: true, artist: newArtist });
     console.log("✅ Artist created and user profile marked as complete:", newArtist);
-
   } catch (error) {
     console.error('❌ Error creating artist:', error);
     res.status(500).json({ success: false, error: error.message });
   }
 };
+
+
 
 
 // Get all Artists
@@ -195,6 +171,56 @@ const deleteArtist = async (req, res) => {
   }
 };
 
+
+
+// POST /api/reviews/:artistId
+const addReview = async (req, res) => {
+  try {
+    const { rating, comment } = req.body;
+    const userId = req.user.id;
+    const { artistId } = req.params;
+
+
+    // Check for duplicate review
+    const existingReview = await Review.findOne({ user: userId, artist: artistId });
+    if (existingReview) {
+      return res.status(400).json({ message: "You have already reviewed this artist." });
+    }
+
+    // Create review
+    const review = await Review.create({ artist: artistId, user: userId, rating, comment });
+
+    // Recalculate artist rating and review count
+    const reviews = await Review.find({ artist: artistId });
+    const avgRating = reviews.reduce((acc, r) => acc + r.rating, 0) / reviews.length;
+
+    await Artist.findByIdAndUpdate(artistId, {
+      rating: avgRating,
+      reviews: reviews.length,
+    });
+
+    res.status(201).json({ message: "Review added", review });
+  } catch (error) {
+    console.error("Error in addReview:", error);
+    res.status(500).json({ message: "Failed to add review", error: error.message });
+  }
+};
+
+// GET /api/reviews/:artistId
+const getReviewsByArtist = async (req, res) => {
+  try {
+    const { artistId } = req.params;
+
+    const reviews = await Review.find({ artist: artistId }).populate({ path: "user", model: "UserLoginSingup", select: "firstName" })
+    res.json(reviews);
+  } catch (error) {
+    res.status(500).json({ message: "Failed to fetch reviews", error: error.message });
+  }
+};
+
+
+
+
 export {
   createArtist,
   getAllArtists,
@@ -202,5 +228,7 @@ export {
   updateArtist,
   deleteArtist,
   getPendingArtists,
-  approveArtist
+  approveArtist,
+  getReviewsByArtist,
+  addReview
 };

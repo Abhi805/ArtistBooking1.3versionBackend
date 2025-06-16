@@ -74,6 +74,13 @@ const artistSchema = new mongoose.Schema({
   trim: true
 }],
 
+profileImage: {
+  type: String,
+  default: '',
+  required: true
+}
+,
+
 videoLink: [{
   type: String,
   trim: true,

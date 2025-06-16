@@ -7,7 +7,7 @@ import dotenv from 'dotenv';     // ✅ To load JWT_SECRET
 dotenv.config();
 
 import authRoutes from './routes/authRoutes.js';
-
+;
 import artistRoutes from './routes/artistRoutes.js';
 import bookingRoutes from './routes/bookingRoutes.js';
 import inquiryRoutes from './routes/inquiryRoutes.js';
@@ -28,6 +28,6 @@ app.use('/api/auth', authRoutes);
 app.use('/api/artists', artistRoutes);
 app.use('/api/artists/booking', bookingRoutes);
 app.use('/api/inquiry', inquiryRoutes);
-
+app.use('/api/reviews', artistRoutes);
 
 export default app;
