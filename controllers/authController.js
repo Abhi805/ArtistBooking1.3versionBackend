@@ -7,8 +7,10 @@ import jwt from "jsonwebtoken";
 
 export const registerUser = async (req, res) => {
   try {
-    const { fullName, mobileNumber, email, password, confirmPassword } =
+    const { fullName, mobileNumber, email, password, confirmPassword, role } =
       req.body;
+
+
 
     if (password !== confirmPassword)
       return res.status(400).json({ msg: "Passwords do not match" });
@@ -24,12 +26,17 @@ export const registerUser = async (req, res) => {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
+
+    // validate role
+    if (!["artist", "volunteer", "admin"].includes(role)) {
+      return res.status(400).json({ msg: "Invalid role specified" });
+    }
     const newUser = new User({
       fullName,
       mobileNumber,
       email,
       password: hashedPassword,
-      role: "user" // 👈 force all new users to be normal users
+      role,// 👈 force all new users to be normal users
     });
 
     await newUser.save();
@@ -52,18 +59,60 @@ const generateToken = (user) => {
 };
 
 
+// export const loginUser = async (req, res) => {
+//   try {
+//     const { email, password } = req.body;
+//     const user = await User.findOne({ email });
+//     if (!user) return res.status(404).json({ msg: "User not found" });
+
+//     const isMatch = await bcrypt.compare(password, user.password);
+//     if (!isMatch) return res.status(400).json({ msg: "Invalid credentials" });
+
+
+
+
+
+//     const token = generateToken(user);
+
+//     // Set HTTP-only cookie
+//     res.cookie("token", token, {
+//       httpOnly: true,
+//       secure: false,
+//       sameSite: "Lax",
+//       maxAge: 24 * 60 * 60 * 1000, // 1 day
+//     });
+
+//     res.status(200).json({
+//       msg: "Login successful",
+//       user: {
+//         id: user._id,
+//         fullName: user.fullName,
+//         email: user.email,
+//         role: user.role,
+//       },
+//     });
+
+//     console.log("Login successful");
+//   } catch (error) {
+//     res.status(500).json({ msg: "Server error", error: error.message });
+//   }
+// };
+
+
 export const loginUser = async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { email, password, role } = req.body; // get role from frontend
+
     const user = await User.findOne({ email });
     if (!user) return res.status(404).json({ msg: "User not found" });
 
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) return res.status(400).json({ msg: "Invalid credentials" });
 
-
-
-
+    // ✅ Check if selected role matches the user's actual role
+    if (role && user.role !== role) {
+      return res.status(403).json({ msg: `Role mismatch: You are not a ${role}` });
+    }
 
     const token = generateToken(user);
 
