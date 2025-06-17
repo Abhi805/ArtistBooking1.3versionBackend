@@ -11,6 +11,7 @@ import authRoutes from './routes/authRoutes.js';
 import artistRoutes from './routes/artistRoutes.js';
 import bookingRoutes from './routes/bookingRoutes.js';
 import inquiryRoutes from './routes/inquiryRoutes.js';
+import volunteerRoutes from './routes/volunteerRoutes.js';
 
 const app = express();
 
@@ -29,5 +30,6 @@ app.use('/api/artists', artistRoutes);
 app.use('/api/artists/booking', bookingRoutes);
 app.use('/api/inquiry', inquiryRoutes);
 app.use('/api/reviews', artistRoutes);
+app.use('/api/volunteers',volunteerRoutes)
 
 export default app;
