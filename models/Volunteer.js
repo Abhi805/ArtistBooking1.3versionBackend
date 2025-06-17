@@ -27,6 +27,11 @@
 import mongoose from "mongoose";
 
 const volunteerSchema = new mongoose.Schema({
+    userId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User", // Assuming your user model name is "User"
+    required: true,
+  },
   fullName: String,
   email: String,
   mobile: String,

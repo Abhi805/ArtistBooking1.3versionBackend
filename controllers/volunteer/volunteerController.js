@@ -34,6 +34,7 @@ const uploadToCloudinary = (fileBuffer, fileName, folder) => {
 // Register a new volunteer with file uploads
 const registerVolunteer = async (req, res) => {
   try {
+    const userId = req.user._id; // ✅ from JWT
     const {
       fullName,
       email,
@@ -77,6 +78,8 @@ const registerVolunteer = async (req, res) => {
     }
     // Continue with rest of logic...
     const newVolunteer = new Volunteer({
+        userId, // ✅ yeh jaroori hai
+
       fullName,
       email,
       mobile,
@@ -223,11 +226,41 @@ const updateVolunteer = async (req, res) => {
   }
 };
 
+// Get volunteer by user ID (from Users collection)
+const getVolunteerByUserId = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const volunteer = await Volunteer.findOne({ userId });
+
+    if (!volunteer) {
+      return res.status(404).json({
+        success: false,
+        message: "Volunteer not found for this user",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      volunteer,
+    });
+  } catch (error) {
+    console.error("❌ Error fetching volunteer by userId:", error);
+    res.status(500).json({
+      success: false,
+      message: "Internal Server Error",
+    });
+  }
+};
+
+
+
+
 export {
   registerVolunteer,
   volunteerUploadMiddleware,
   getVolunteer,
   getVolunteerById,
-  updateVolunteer
+  updateVolunteer,
+  getVolunteerByUserId   
 };
  
