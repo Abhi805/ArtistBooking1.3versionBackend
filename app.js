@@ -15,7 +15,7 @@ import volunteerRoutes from './routes/volunteerRoutes.js';
 
 const app = express();
 
-// ✅ Enable CORS with credentials
+
 // app.use(cors({
 //   origin: "http://localhost:5173"  ,
 //   credentials: true
