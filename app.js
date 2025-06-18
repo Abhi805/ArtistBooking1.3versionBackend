@@ -15,11 +15,31 @@ import volunteerRoutes from './routes/volunteerRoutes.js';
 
 const app = express();
 
-// ✅ Enable CORS with credentials
-app.use(cors({
-  origin: "https://artistbooking1-3versionbackend.onrender.com" ,
-  credentials: true
-})); 
+// // ✅ Enable CORS with credentials
+// app.use(cors({
+//   origin: "https://artistbooking1-3versionbackend.onrender.com" ,
+//   credentials: true
+// })); 
+
+const allowedOrigins = [
+  "https://artistbookinggnv-sxe2.vercel.app",  // ✅ Your frontend URL
+  "https://artistbooking1-3versionbackend.onrender.com"  // ✅ Optional: backend URL itself
+];
+
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    credentials: true, // if you're using cookies or auth headers
+  })
+);
+
+
 
 app.use(express.json());
 app.use(cookieParser());
