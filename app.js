@@ -15,9 +15,9 @@ import volunteerRoutes from './routes/volunteerRoutes.js';
 
 const app = express();
 
-// // ✅ Enable CORS with credentials
+// ✅ Enable CORS with credentials
 // app.use(cors({
-//   origin: "https://artistbooking1-3versionbackend.onrender.com" ,
+//   origin: "http://localhost:5173"  ,
 //   credentials: true
 // })); 
 
