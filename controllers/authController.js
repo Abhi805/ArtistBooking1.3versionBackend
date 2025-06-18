@@ -116,13 +116,24 @@ export const loginUser = async (req, res) => {
 
     const token = generateToken(user);
 
-    // Set HTTP-only cookie
+    // Set HTTP-only cookie  devlopment
+    // res.cookie("token", token, {
+    //   httpOnly: true,
+    //   secure: false,
+    //   sameSite: "Lax",
+    //   maxAge: 24 * 60 * 60 * 1000, // 1 day
+    // });
+
+
+//production
+
     res.cookie("token", token, {
       httpOnly: true,
-      secure: false,
-      sameSite: "Lax",
-      maxAge: 24 * 60 * 60 * 1000, // 1 day
+      secure: process.env.NODE_ENV === "production", // true only in production
+      sameSite: "None", // Required for cross-site cookies
+      maxAge: 24 * 60 * 60 * 1000,
     });
+
 
     res.status(200).json({
       msg: "Login successful",
