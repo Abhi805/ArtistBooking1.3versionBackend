@@ -17,7 +17,7 @@ const app = express();
 
 // ✅ Enable CORS with credentials
 app.use(cors({
-  origin: "http://localhost:5173" || "http://localhost:5174",
+  origin: "https://artistbooking1-3versionbackend.onrender.com" ,
   credentials: true
 })); 
 
