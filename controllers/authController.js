@@ -116,7 +116,7 @@ export const loginUser = async (req, res) => {
 
     const token = generateToken(user);
 
-    // Set devlopment
+    
     // res.cookie("token", token, {
     //   httpOnly: true,
     //   secure: false,
