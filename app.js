@@ -48,7 +48,9 @@ const app = express();
 
 const allowedOrigins = [
   "https://artistbookinggnv-sxe2.vercel.app", 
-  "https://artistbooking1-3versionbackend.onrender.com" 
+    "https://artistbooking1-3versionbackend.onrender.com",  // ✅ Optional: backend URL itself
+  // "https://www.gnvindia.com",
+  // "https://gnvindia.com",
 ];
 
 app.use(
