@@ -116,23 +116,23 @@ export const loginUser = async (req, res) => {
 
     const token = generateToken(user);
 
-    // Set HTTP-only cookie  devlopment
+    // Set devlopment
     // res.cookie("token", token, {
     //   httpOnly: true,
     //   secure: false,
     //   sameSite: "Lax",
-    //   maxAge: 24 * 60 * 60 * 1000, // 1 day
+    //   maxAge: 24 * 60 * 60 * 1000,
     // });
 
 
-//production
 
+production
     res.cookie("token", token, {
-      httpOnly: true,
-      secure: true, // true only in production
-      sameSite: "None", // Required for cross-site cookies
-      maxAge: 24 * 60 * 60 * 1000,
-    });
+       httpOnly: true,
+       secure: true,
+       sameSite: "None", 
+       maxAge: 24 * 60 * 60 * 1000,
+     });
 
 
     res.status(200).json({
