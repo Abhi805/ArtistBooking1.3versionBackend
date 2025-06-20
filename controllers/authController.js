@@ -52,51 +52,11 @@ export const registerUser = async (req, res) => {
 
 const generateToken = (user) => {
   return jwt.sign(
-    { id: user._id, role: user.role }, // include role here
+    { id: user._id,   email: user.email, role: user.role }, // include role here
     process.env.JWT_SECRET,
     { expiresIn: process.env.JWT_EXPIRES_IN }
   );
 };
-
-
-// export const loginUser = async (req, res) => {
-//   try {
-//     const { email, password } = req.body;
-//     const user = await User.findOne({ email });
-//     if (!user) return res.status(404).json({ msg: "User not found" });
-
-//     const isMatch = await bcrypt.compare(password, user.password);
-//     if (!isMatch) return res.status(400).json({ msg: "Invalid credentials" });
-
-
-
-
-
-//     const token = generateToken(user);
-
-//     // Set HTTP-only cookie
-//     res.cookie("token", token, {
-//       httpOnly: true,
-//       secure: false,
-//       sameSite: "Lax",
-//       maxAge: 24 * 60 * 60 * 1000, // 1 day
-//     });
-
-//     res.status(200).json({
-//       msg: "Login successful",
-//       user: {
-//         id: user._id,
-//         fullName: user.fullName,
-//         email: user.email,
-//         role: user.role,
-//       },
-//     });
-
-//     console.log("Login successful");
-//   } catch (error) {
-//     res.status(500).json({ msg: "Server error", error: error.message });
-//   }
-// };
 
 
 export const loginUser = async (req, res) => {
@@ -116,23 +76,23 @@ export const loginUser = async (req, res) => {
 
     const token = generateToken(user);
 
-    
-    // res.cookie("token", token, {
-    //   httpOnly: true,
-    //   secure: false,
-    //   sameSite: "Lax",
-    //   maxAge: 24 * 60 * 60 * 1000,
-    // });
-
-
-
-production
+    //devlopment
     res.cookie("token", token, {
-       httpOnly: true,
-       secure: true,
-       sameSite: "None", 
-       maxAge: 24 * 60 * 60 * 1000,
-     });
+      httpOnly: true,
+      secure: false,
+      sameSite: "Lax",
+      maxAge: 24 * 60 * 60 * 1000,
+    });
+
+
+
+// production
+//     res.cookie("token", token, {
+//        httpOnly: true,
+//        secure: true,
+//        sameSite: "None", 
+//        maxAge: 24 * 60 * 60 * 1000,
+//      });
 
 
     res.status(200).json({
