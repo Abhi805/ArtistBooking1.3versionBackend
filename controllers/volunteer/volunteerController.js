@@ -148,6 +148,17 @@ const getVolunteerById = async (req, res) => {
   }
 };
 
+export const getVolunteerByUsername = async (req, res) => {
+  try {
+    const volunteer = await Volunteer.findOne({ username: req.params.username });
+    if (!volunteer) return res.status(404).json({ message: "Volunteer not found" });
+    res.json(volunteer);
+  } catch (err) {
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+
 
 
 
