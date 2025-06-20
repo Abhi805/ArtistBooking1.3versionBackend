@@ -44,14 +44,15 @@ const app = express();
 //     credentials: true, // if you're using cookies or auth headers
 //   })
 // );
+//  "https://www.gnvindia.com",
+  // "https://gnvindia.com",
+  // "http://localhost:5173",
 
 
 const allowedOrigins = [
   "https://artistbookinggnv-sxe2.vercel.app", 
     "https://artistbooking1-3versionbackend.onrender.com",  // ✅ Optional: backend URL itself
-  "https://www.gnvindia.com",
-  "https://gnvindia.com",
-  "http://localhost:5173",
+ 
 ];
 
 app.use(
