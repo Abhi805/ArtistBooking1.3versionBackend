@@ -7,7 +7,8 @@ import dotenv from 'dotenv';     // ✅ To load JWT_SECRET
 dotenv.config();
 
 import authRoutes from './routes/authRoutes.js';
-;
+
+import cors from "cors";
 import artistRoutes from './routes/artistRoutes.js';
 import bookingRoutes from './routes/bookingRoutes.js';
 import inquiryRoutes from './routes/inquiryRoutes.js';
@@ -49,24 +50,50 @@ const app = express();
   // "http://localhost:5173",
 
   // "https://artistbookinggnv-sxe2.vercel.app", 
-const allowedOrigins = [
-    "https://artistbookinggnv-sxe2.vercel.app",
-    "https://artistbooking1-3versionbackend.onrender.com",  // ✅ Optional: backend URL itself
+// const allowedOrigins = [
+//   "https://gnvindia.com",
+
+//     "https://artistbookinggnv-sxe2.vercel.app",
+//     "https://artistbooking1-3versionbackend.onrender.com",  // ✅ Optional: backend URL itself
  
+// ];
+
+// app.use(
+//   cors({
+//     origin: function (origin, callback) {
+//       if (!origin || allowedOrigins.includes(origin)) {
+//         callback(null, true);
+//       } else {
+//         callback(new Error("Not allowed by CORS"));
+//       }
+//     },
+//     credentials: true, // Important for cookies/auth headers
+//   })
+// );
+
+
+
+const allowedOrigins = [
+  "https://gnvindia.com",
+  "https://artistbookinggnv-sxe2.vercel.app",
+  "https://artistbooking1-3versionbackend.onrender.com"
 ];
 
-app.use(
-  cors({
-    origin: function (origin, callback) {
-      if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(new Error("Not allowed by CORS"));
-      }
-    },
-    credentials: true, // Important for cookies/auth headers
-  })
-);
+const corsOptions = {
+  origin: function (origin, callback) {
+    // Allow requests from allowedOrigins or from tools like Postman (no origin)
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  credentials: true,
+};
+
+app.use(cors(corsOptions));
+
+
 
 
 app.use(express.json());
