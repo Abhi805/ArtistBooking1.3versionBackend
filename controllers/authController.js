@@ -7,7 +7,7 @@ import jwt from "jsonwebtoken";
 
 export const registerUser = async (req, res) => {
   try {
-    const { fullName, mobileNumber, email, password, confirmPassword, role } =
+    const { fullName, mobileNumber, email, password, confirmPassword,username,role } =
       req.body;
 
 
@@ -18,6 +18,10 @@ export const registerUser = async (req, res) => {
     const existingUser = await User.findOne({ email });
     if (existingUser)
       return res.status(400).json({ msg: "User already exists" });
+
+      const existingName = await User.findOne({ username });
+    if (existingName)
+      return res.status(400).json({ msg: "username already exists" });
 
     const existingUserNumber = await User.findOne({ mobileNumber });
     if (existingUserNumber) {
@@ -34,6 +38,7 @@ export const registerUser = async (req, res) => {
     const newUser = new User({
       fullName,
       mobileNumber,
+      username,
       email,
       password: hashedPassword,
       role,// 👈 force all new users to be normal users
