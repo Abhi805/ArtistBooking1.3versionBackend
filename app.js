@@ -122,9 +122,9 @@ const app = express();
 const allowedOrigins = [
    "http://localhost:5173",
   "https://gnvindia.com",
-    "https://www.gnvindia.com", // ✅ Add this
+  "https://www.gnvindia.com", // ✅ Add this
   "https://artistbookinggnv-sxe2.vercel.app",
-  "https://artistbooking1-3versionbackend.onrender.com"
+  // "https://artistbooking1-3versionbackend.onrender.com"
 ];
 
 const corsOptions = {
