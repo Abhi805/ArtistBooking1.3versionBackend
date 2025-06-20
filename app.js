@@ -124,7 +124,7 @@ const allowedOrigins = [
   "https://gnvindia.com",
   "https://www.gnvindia.com", // ✅ Add this
   "https://artistbookinggnv-sxe2.vercel.app",
-  // "https://artistbooking1-3versionbackend.onrender.com"
+ 
 ];
 
 const corsOptions = {
