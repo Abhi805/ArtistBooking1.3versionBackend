@@ -220,6 +220,51 @@ const getReviewsByArtist = async (req, res) => {
 
 
 
+// PUT /api/artist/update
+const updateCurrentArtistProfile = async (req, res) => {
+  try {
+    const artist = await Artist.findOne({ userId: req.user.id });
+    if (!artist) {
+      return res.status(404).json({ message: 'Artist not found' });
+    }
+
+    const updatedFields = req.body;
+
+    // If image file is uploaded (single file mode), update image using Multer (disk or Cloudinary)
+    if (req.file) {
+      artist.profileImage = req.file.filename; // or cloud URL if using cloudinary
+    }
+
+    // Update other fields
+    artist.name = updatedFields.name || artist.name;
+    artist.email = updatedFields.email || artist.email;
+    artist.phone = updatedFields.phone || artist.phone;
+    artist.bio = updatedFields.bio || artist.bio;
+
+    await artist.save();
+    res.status(200).json({ message: 'Profile updated successfully', artist });
+  } catch (error) {
+    console.error("Error in updateCurrentArtistProfile:", error);
+    res.status(500).json({ message: 'Failed to update profile', error: error.message });
+  }
+};
+
+// GET /api/artist/me
+const getCurrentArtistProfile = async (req, res) => {
+  try {
+    const artist = await Artist.findOne({ userId: req.user.id });
+    if (!artist) {
+      return res.status(404).json({ message: 'Artist not found' });
+    }
+    res.status(200).json(artist);
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to fetch profile', error: error.message });
+  }
+};
+
+
+
+
 
 export {
   createArtist,
@@ -230,5 +275,9 @@ export {
   getPendingArtists,
   approveArtist,
   getReviewsByArtist,
-  addReview
+  addReview,
+  updateCurrentArtistProfile,
+
+  getCurrentArtistProfile
 };
+

@@ -3,6 +3,10 @@ import { registerVolunteer, volunteerUploadMiddleware,getVolunteer,getVolunteerB
 // import { protectedRoute } from "../controllers/protectedRoute.js";
 // import { verifyToken } from "../middleware/authMiddleware.js";
 import { protect } from "../middleware/authMiddleware2.js";
+import { createRating, getRatingsForArtist } from '../controllers/volunteer/ratingController.js';
+import { verifyToken } from '../middleware/authMiddleware.js';
+
+
 
 const router = express.Router();
 
@@ -14,4 +18,4 @@ router.get("/by-user/:userId", getVolunteerByUserId);
 router.get('/username/:username', getVolunteerByUsername);
 
 export default router;
- 
+  

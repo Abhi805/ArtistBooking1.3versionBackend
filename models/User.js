@@ -4,6 +4,7 @@ const userSchema = new mongoose.Schema(
   {
     fullName: { type: String, required: true },
     mobileNumber: { type: String, required: true, unique: true, match: /^[0-9]{10}$/ },
+    username: {type:String,required:true, unique:true},
     email: {
       type: String,
       required: true,

@@ -1,35 +1,50 @@
-import express from 'express';
+
+   import express from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
-import dotenv from 'dotenv';     // ✅ To load JWT_SECRET
+import dotenv from 'dotenv';
 
-// Load environment variables
 dotenv.config();
 
+const app = express();
+
+const allowedOrigins = [
+   "http://localhost:5173",
+  "https://gnvindia.com",
+  "https://www.gnvindia.com", // ✅ Add this
+  "https://artistbookinggnv-sxe2.vercel.app",
+ 
+];
+
+const corsOptions = {
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  credentials: true,
+};
+
+app.use(cors(corsOptions));
+app.use(express.json());
+app.use(cookieParser());
+app.use(express.urlencoded({ extended: true }));
+app.use("/public", express.static("public"));
+
+// Routes
 import authRoutes from './routes/authRoutes.js';
-;
 import artistRoutes from './routes/artistRoutes.js';
 import bookingRoutes from './routes/bookingRoutes.js';
 import inquiryRoutes from './routes/inquiryRoutes.js';
 import volunteerRoutes from './routes/volunteerRoutes.js';
-
-const app = express();
-
-// ✅ Enable CORS with credentials
-app.use(cors({
-  origin: "http://localhost:5173" || "http://localhost:5173",
-  credentials: true
-})); 
-
-app.use(express.json());
-app.use(cookieParser());
-app.use(express.urlencoded({ extended: true }));
 
 app.use('/api/auth', authRoutes);
 app.use('/api/artists', artistRoutes);
 app.use('/api/artists/booking', bookingRoutes);
 app.use('/api/inquiry', inquiryRoutes);
 app.use('/api/reviews', artistRoutes);
-app.use('/api/volunteers',volunteerRoutes)
+app.use('/api/volunteers', volunteerRoutes);
 
 export default app;
