@@ -83,22 +83,22 @@ export const loginUser = async (req, res) => {
     const token = generateToken(user);
 
     // devlopment
-    res.cookie("token", token, {
-      httpOnly: true,
-      secure: false,
-      sameSite: "Lax",
-      maxAge: 24 * 60 * 60 * 1000,
-    });
+    // res.cookie("token", token, {
+    //   httpOnly: true,
+    //   secure: false,
+    //   sameSite: "Lax",
+    //   maxAge: 24 * 60 * 60 * 1000,
+    // });
 
 
 
 // production
-    // res.cookie("token", token, {
-    //    httpOnly: true,
-    //    secure: true,
-    //    sameSite: "None", 
-    //    maxAge: 24 * 60 * 60 * 1000,
-    //  });
+    res.cookie("token", token, {
+       httpOnly: true,
+       secure: true,
+       sameSite: "None", 
+       maxAge: 24 * 60 * 60 * 1000,
+     });
 
 
     res.status(200).json({

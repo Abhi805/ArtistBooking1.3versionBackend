@@ -238,7 +238,7 @@ const updateVolunteer = async (req, res) => {
 // Get all volunteers
 const getVolunteer = async (req, res) => {
   try {
-    const volunteers = await Volunteer.find();
+    const volunteers = await Volunteer.find().populate("userId", "username"); // ✅ fetch username
     res.status(200).json(volunteers);
   } catch (err) {
     console.error("❌ Error fetching volunteers:", err);
@@ -292,6 +292,26 @@ const getVolunteerByUserId = async (req, res) => {
     });
   }
 };
+ 
+const getVolunteerByUsername = async (req, res) => {
+  try {
+    const volunteers = await Volunteer.find().populate("userId");
+
+    const volunteer = volunteers.find(
+      (v) => v.userId?.username === req.params.username
+    );
+
+    if (!volunteer) {
+      return res.status(404).json({ message: "Volunteer not found" });
+    }
+
+    res.json(volunteer);
+  } catch (err) {
+    console.error("Error in getVolunteerByUsername:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
 
 export {
   registerVolunteer,
@@ -300,4 +320,5 @@ export {
   getVolunteer,
   getVolunteerById,
   getVolunteerByUserId,
+  getVolunteerByUsername
 };
