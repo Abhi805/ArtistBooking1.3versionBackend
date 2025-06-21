@@ -4,7 +4,7 @@ const userSchema = new mongoose.Schema(
   {
     fullName: { type: String, required: true },
     mobileNumber: { type: String, required: true, unique: true, match: /^[0-9]{10}$/ },
-    username: {type:String,required:true, unique:true},
+    username: { type: String, required: true, unique: true },
     email: {
       type: String,
       required: true,
@@ -14,11 +14,12 @@ const userSchema = new mongoose.Schema(
       match: [/\S+@\S+\.\S+/, 'Invalid email']
     },
     password: { type: String, required: true },
-    role: {
+    role: {   
       type: String,
-      enum: ["user", "admin","artist","volunteer"],
+      enum: ["user", "admin", "artist", "volunteer"],
       default: "user",
     },
+    authType: { type: String, enum: ["custom", "google"], default: "custom" },
     profileCompleted: {
       type: Boolean,
       default: false,
