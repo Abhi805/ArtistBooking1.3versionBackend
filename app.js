@@ -11,6 +11,7 @@ const app = express();
 
 const allowedOrigins = [
    "http://localhost:5173",
+  //  "http://localhost:5174",
   "https://gnvindia.com",
   "https://www.gnvindia.com", // ✅ Add this
   "https://artistbookinggnv-sxe2.vercel.app",

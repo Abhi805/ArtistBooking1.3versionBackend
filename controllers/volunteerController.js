@@ -46,12 +46,22 @@ export const getVolunteerByUserId = async (req, res) => {
   }
 };
 
-export const getVolunteerByUsername = async (req, res) => {
+const getVolunteerByUsername = async (req, res) => {
   try {
-    const volunteer = await Volunteer.findOne({ username: req.params.username });
+    const volunteers = await Volunteer.find().populate("userId");
+
+    const volunteer = volunteers.find(
+      (v) => v.userId?.username === req.params.username
+    );
+
+    if (!volunteer) {
+      return res.status(404).json({ message: "Volunteer not found" });
+    }
+
     res.json(volunteer);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
+  } catch (err) {
+    console.error("Error in getVolunteerByUsername:", err);
+    res.status(500).json({ message: "Server error" });
   }
 };
 
