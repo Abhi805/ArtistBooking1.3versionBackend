@@ -13,7 +13,7 @@ export const setUserRole = async (req, res) => {
     const updatedUser = await User.findByIdAndUpdate(
       req.user.id,
       { role },
-      { new: true }  
+      { new: true } 
     );
 
     if (!updatedUser) {
