@@ -14,10 +14,10 @@ export const sendOtp = async (req, res) => {
   }
 
   try {
-    const existingMobile = await User.findOne({ mobile });
-    if (existingMobile) {
-      return res.status(400).json({ error: "Mobile number already exists." });
-    }
+    // const existingMobile = await User.findOne({ mobile });
+    // if (existingMobile) {
+    //   return res.status(400).json({ error: "Mobile number already exists." });
+    // }
 
     const existingUsername = await User.findOne({ username });
     if (existingUsername) {
@@ -37,7 +37,7 @@ export const sendOtp = async (req, res) => {
 
     res.status(200).json({ message: "OTP sent successfully." });
   } catch (err) {
-      console.error("Error sending OTP:", err); // 🔍 See full error in console
+    console.error("Error sending OTP:", err); // 🔍 See full error in console
     res.status(500).json({ error: "Failed to send OTP." });
   }
 };
@@ -75,10 +75,10 @@ export const registerUser = async (req, res) => {
       return res.status(400).json({ success: false, error: "Username already taken" });
     }
 
-    const existingMobile = await User.findOne({ mobile });
-    if (existingMobile) {
-        return res.status(400).json({ success: false, error: "Mobile number already registered" });
-    }
+    // const existingMobile = await User.findOne({ mobile });
+    // if (existingMobile) {
+    //     return res.status(400).json({ success: false, error: "Mobile number already registered" });
+    // }
 
     if (email) {
       const existingEmail = await User.findOne({ email });
@@ -98,6 +98,7 @@ export const registerUser = async (req, res) => {
       password: hashedPassword,
       mobile,
       email,
+      role: "unassigned",
       isVerified: true,
     });
 
@@ -112,9 +113,9 @@ export const registerUser = async (req, res) => {
 
 
 export const loginUser = async (req, res) => {
-  const { loginId , password } = req.body;
+  const { loginId, password } = req.body;
 
-  if (!loginId  || !password) {
+  if (!loginId || !password) {
     return res.status(400).json({ success: false, error: "Username and password are required." });
   }
 
