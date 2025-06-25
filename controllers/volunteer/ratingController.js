@@ -1,8 +1,7 @@
 // controllers/ratingController.js
 import User from "../../models/User.js";
 import Rating from "../../models/Rating.js";
-// import Rating from '../models/Rating.js';
-// import User from '../models/User.js';
+
 
 export const createRatingByUsername = async (req, res) => {
   try {

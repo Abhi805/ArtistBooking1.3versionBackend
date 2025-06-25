@@ -7,5 +7,7 @@ import { protect, } from "../middleware/authMiddleware2.js";
 const router = express.Router();
 
 router.post("/volunteer/:username", protect,createRatingByUsername);
+router.get("/volunteer/:username", getRatingsByUsername);
 
 export default router;
+ 
