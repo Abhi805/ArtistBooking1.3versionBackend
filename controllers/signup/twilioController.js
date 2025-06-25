@@ -13,7 +13,7 @@ app.post('/send-otp', async (req, res) => {
 });
 
 
-
+ 
 app.post('/verify-otp', async (req, res) => {
   const { phone, otp } = req.body;
   try {
