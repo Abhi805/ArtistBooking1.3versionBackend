@@ -16,7 +16,7 @@ const allowedOrigins = [
   "https://www.gnvindia.com", // ✅ Add this
   "https://artistbookinggnv-sxe2.vercel.app",
 
-];
+];''
 
 const corsOptions = {
   origin: (origin, callback) => {
