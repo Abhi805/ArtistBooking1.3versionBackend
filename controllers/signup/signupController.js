@@ -1,10 +1,11 @@
 import bcrypt from 'bcrypt';
 import User from "../../models/User.js";
-import twilio from "twilio";
+// import twilio from "twilio";
 import jwt from "jsonwebtoken";
+import axios from "axios";
 
 
-const client = twilio(process.env.TWILIO_SID, process.env.TWILIO_AUTH_TOKEN);
+
 
 export const sendOtp = async (req, res) => {
   const { mobile, username, email } = req.body;
@@ -14,11 +15,6 @@ export const sendOtp = async (req, res) => {
   }
 
   try {
-    // const existingMobile = await User.findOne({ mobile });
-    // if (existingMobile) {
-    //   return res.status(400).json({ error: "Mobile number already exists." });
-    // }
-
     const existingUsername = await User.findOne({ username });
     if (existingUsername) {
       return res.status(400).json({ error: "Username already exists." });
@@ -31,19 +27,37 @@ export const sendOtp = async (req, res) => {
       }
     }
 
-    await client.verify.v2
-      .services(process.env.TWILIO_VERIFY_SID)
-      .verifications.create({ to: mobile, channel: "sms" });
+    // const existingMobile = await User.findOne({ mobile });
+    // if (existingMobile) {
+    //   return res.status(400).json({ error: "Mobile number already exists." });
+    // }
 
-    res.status(200).json({ message: "OTP sent successfully." });
+    const apiKey = process.env.TWO_FACTOR_API_KEY;
+    // const templateId = process.env.TWO_FACTOR_TEMPLATE_ID; // Optional: use if needed
+
+    const url = `https://2factor.in/API/V1/${apiKey}/SMS/${mobile}/AUTOGEN/OTP1`;
+
+    const response = await axios.get(url);
+
+    if (response.data.Status === "Success") {
+      const sessionId = response.data.Details;
+      console.log("✅ OTP sessionId:", sessionId);
+      return res.status(200).json({
+        success: true,
+        message: "OTP sent successfully.",
+        sessionId: sessionId,
+      });
+    } else {
+      return res.status(400).json({ error: "Failed to send OTP." });
+    }
   } catch (err) {
-    console.error("Error sending OTP:", err); // 🔍 See full error in console
-    res.status(500).json({ error: "Failed to send OTP." });
+    console.error("Error sending OTP:", err.message);
+    res.status(500).json({ error: "Server error." });
   }
 };
 
 
-// Register User
+
 export const registerUser = async (req, res) => {
   const {
     firstName,
@@ -55,6 +69,7 @@ export const registerUser = async (req, res) => {
     confirmPassword,
     mobile,
     otp,
+    sessionId,
     email = ""
   } = req.body;
 
@@ -63,22 +78,19 @@ export const registerUser = async (req, res) => {
   }
 
   try {
-    const check = await client.verify.v2
-      .services(process.env.TWILIO_VERIFY_SID)
-      .verificationChecks.create({ to: mobile, code: otp });
+    const apiKey = process.env.TWO_FACTOR_API_KEY;
+    const verifyUrl = `https://2factor.in/API/V1/${apiKey}/SMS/VERIFY/${sessionId}/${otp}`;
 
-    if (check.status !== 'approved') {
+    const response = await axios.get(verifyUrl);
+
+    if (response.data.Status !== "Success") {
       return res.status(400).json({ success: false, error: "Invalid OTP" });
     }
+
     const existingUsername = await User.findOne({ username });
     if (existingUsername) {
       return res.status(400).json({ success: false, error: "Username already taken" });
     }
-
-    // const existingMobile = await User.findOne({ mobile });
-    // if (existingMobile) {
-    //     return res.status(400).json({ success: false, error: "Mobile number already registered" });
-    // }
 
     if (email) {
       const existingEmail = await User.findOne({ email });
@@ -86,6 +98,12 @@ export const registerUser = async (req, res) => {
         return res.status(400).json({ success: false, error: "Email already registered" });
       }
     }
+
+    
+    // const existingMobile = await User.findOne({ mobile });
+    // if (existingMobile) {
+    //   return res.status(400).json({ error: "Mobile number already exists." });
+    // }
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -98,7 +116,6 @@ export const registerUser = async (req, res) => {
       password: hashedPassword,
       mobile,
       email,
-      role: "unassigned",
       isVerified: true,
     });
 
@@ -106,9 +123,14 @@ export const registerUser = async (req, res) => {
     res.status(201).json({ success: true, message: "User registered successfully!" });
 
   } catch (err) {
-    res.status(500).json({ success: false, error: err.message });
+    console.error("Registration error:", err.message, err);
+    res.status(500).json({ success: false, error: "Server error." });
   }
 };
+
+
+
+
 
 
 

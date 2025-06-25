@@ -1,8 +1,8 @@
-// // controllers/volunteerReachController.js
+
 
 // import Volunteer from "../models/Volunteer.js";
 
-// // ✅ Increases reach count for a volunteer (only once per device/frontend handles this)
+
 // export const increaseVolunteerReach = async (req, res) => {
 //   try {
 //     const { id } = req.params;

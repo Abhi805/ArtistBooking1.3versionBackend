@@ -11,7 +11,7 @@ const app = express();
 
 const allowedOrigins = [
    "http://localhost:5173",
-  //  "http://localhost:5174",
+   "http://localhost:5174",
   "https://gnvindia.com",
   "https://www.gnvindia.com", // ✅ Add this
   "https://artistbookinggnv-sxe2.vercel.app",
@@ -44,7 +44,9 @@ import volunteerRoutes from './routes/volunteerRoutes.js';
 import signupRoutes from './routes/signup/signupRoutes.js';
 import userRoutes from './routes/userRoutes.js';
 import reachRoutes from './routes/reachRoutes.js';
+import ratingRoutes from './routes/ratingRoutes.js';
 import volunteerStatsRoutes from './routes/volunteerStatsRoutes.js';
+
 
 app.use('/api/auth', authRoutes);
 app.use('/api/artists', artistRoutes);
@@ -53,8 +55,10 @@ app.use('/api/inquiry', inquiryRoutes);
 app.use('/api/reviews', artistRoutes);
 app.use('/api/volunteers', volunteerRoutes);
 app.use('/api/twilio', signupRoutes);
+app.use('/api/fastsms', signupRoutes);
 app.use('/api/roll', userRoutes);
 app.use('/api/reach',reachRoutes);
 app.use('/api/volunteer-stats',volunteerStatsRoutes);
+app.use('/api/ratings',ratingRoutes);
 
 export default app;

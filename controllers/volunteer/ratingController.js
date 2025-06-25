@@ -1,22 +1,35 @@
+// controllers/ratingController.js
+import User from "../../models/User.js";
 import Rating from "../../models/Rating.js";
+// import Rating from '../models/Rating.js';
+// import User from '../models/User.js';
 
-export const createRating = async (req, res) => {
+export const createRatingByUsername = async (req, res) => {
   try {
-    const { artistId, stars, comment } = req.body;
-    const userId = req.user._id;
+    const { username } = req.params;
+    const { stars, comment } = req.body;
+    const userId = req.user._id; // assuming JWT middleware sets this
 
-    if (!artistId || !stars) {
-      return res.status(400).json({ message: "Artist ID and stars are required" });
+    // Find volunteer by username
+    const volunteer = await User.findOne({ username, role: "volunteer" });
+    if (!volunteer) {
+      return res.status(404).json({ message: "Volunteer not found" });
     }
 
-    const existing = await Rating.findOne({ artistId, userId });
+    // Check for existing rating
+    const existing = await Rating.findOne({ artistId: volunteer._id, userId });
     if (existing) {
-      return res.status(400).json({ message: "You have already rated this artist." });
+      return res.status(400).json({ message: "You have already rated this volunteer." });
     }
 
-    const rating = new Rating({ artistId, userId, stars, comment });
-    await rating.save();
+    const rating = new Rating({
+      artistId: volunteer._id,
+      userId,
+      stars,
+      comment,
+    });
 
+    await rating.save();
     res.status(201).json({ success: true, rating });
   } catch (err) {
     console.error(err);
@@ -24,11 +37,14 @@ export const createRating = async (req, res) => {
   }
 };
 
-export const getRatingsForArtist = async (req, res) => {
-  try {
-    const { artistId } = req.params;
 
-    const ratings = await Rating.find({ artistId });
+export const getRatingsByUsername = async (req, res) => {
+  try {
+    const { username } = req.params;
+    const artist = await User.findOne({ username });
+    if (!artist) return res.status(404).json({ message: "Artist not found" });
+
+    const ratings = await Rating.find({ artistId: artist._id });
 
     const averageRating =
       ratings.length > 0
@@ -38,9 +54,10 @@ export const getRatingsForArtist = async (req, res) => {
     res.status(200).json({
       success: true,
       ratings,
-      averageRating, // 👈 VERY IMPORTANT
+      averageRating,
     });
   } catch (err) {
+    console.error("Fetch Rating Error:", err);
     res.status(500).json({ message: "Failed to fetch ratings" });
   }
 };
