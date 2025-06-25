@@ -19,15 +19,10 @@
 // export default mongoose.model('Volunteer', volunteerSchema);
 
 
-
-
-
-
-// models/Volunteer.js
 import mongoose from "mongoose";
 
 const volunteerSchema = new mongoose.Schema({
-    userId: {
+  userId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User", // Assuming your user model name is "User"
     required: true,
@@ -60,6 +55,10 @@ const volunteerSchema = new mongoose.Schema({
       points: [String],
     },
   ],
+  // reachCount: {
+  //   type: Number,
+  //   default: 0,
+  // },
 });
 
 export default mongoose.model("Volunteer", volunteerSchema);
